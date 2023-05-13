@@ -1,0 +1,64 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homepage</title>
+  <link rel="stylesheet" href="{% static "chat_app/styles.css" %}">
+  <script src="{% static 'chat_app/script.js' %}?v={{ timestamp }}"></script>
+</head>
+<body>
+  {% comment %} <h1 style="text-align: center;color:brown;font-size:25px;">Connection Establish</h1>
+  
+  <p>Connection established Between {{user1}} and {{user2}}</p> {% endcomment %}
+ 
+  {% csrf_token %}
+<div class="box-container">
+  <h1 style="text-align: center;color:brown;font-size:25px;">Welcome {{user}} </h1>
+  <center><button id="toggle-status">{% if user.is_active %}Go Offline{% else %}Go Online{% endif %}</button></center>
+</div>
+{% block scripts %}
+<script>
+  document.getElementById('toggle-status').addEventListener('click', function() {
+    var status = this.innerText.toLowerCase().trim();
+    if (status === 'go online') {
+      window.location.href = '/chat/connection/';
+    } else {
+      var user_id = '{{ request.session.user_id }}';
+      var csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      
+      var data = new FormData();
+      data.append('user_id', user_id);
+      data.append('status', 'offline');
+      
+      fetch('/chat/toggle-online-status/', {
+        method: 'POST',
+        body: data,
+        headers: {
+          'X-CSRFToken': csrftoken
+        }
+      }).then(function(response) {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error('Network response was not ok.');
+      }).then(function(data) {
+        if (data.success) {
+          var toggleButton = document.getElementById('toggle-status');
+          toggleButton.innerText = 'Go Online';
+        } else {
+          console.log('Failed to update online status.');
+        }
+      }).catch(function(error) {
+        console.log('Fetch error:', error);
+      });
+    }
+  });
+</script>
+{% endblock %}
+ 
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+{% load static %}
+{% if error_message %}
+<p>{{ error_message }}</p>
+{% endif %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Form</title>
+  <link rel="stylesheet" href="{% static "chat_app/styles.css" %}">
+</head>
+<body>
+  <h1 style="text-align: center;color:brown;font-size:25px;">Login Form</h1>
+<form method="post">
+  {% csrf_token %}
+  <label for="email_or_phone">Email or Phone:</label>
+  <input type="text" id="email_or_phone" name="email_or_phone">
+  
+  <label for="password">Password:</label>
+  <input type="text" id="password" name="password">
+  
+  <button type="submit">Log In</button>
+</form>
+</body>
+</html>
+<script>
+  const emailOrPhoneInput = document.getElementById('email_or_phone');
+  emailOrPhoneInput.addEventListener('input', function() {
+    if (emailOrPhoneInput.value.includes('@')) {
+      emailOrPhoneInput.setAttribute('type', 'email');
+    } else {
+      emailOrPhoneInput.setAttribute('type', 'tel');
+    }
+  });
+</script>

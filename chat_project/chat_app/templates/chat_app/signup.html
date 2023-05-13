@@ -1,0 +1,19 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign up</title>
+  <link rel="stylesheet" href="{% static "chat_app/styles.css" %}">
+</head>
+<body>
+  <h1 style="text-align: center;color:brown;font-size:25px;">Sign up</h1>
+  <h1>Sign up</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Sign up">
+  </form>
+</body>
+</html>
