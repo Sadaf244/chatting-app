@@ -17,9 +17,14 @@ User=get_user_model()
 def connected(request):
     f_person = request.session['user_id']
     first_person = ChatUser.objects.get(id=f_person)
-    print(first_person)
-    user2 = request.GET.get('user2')
-    return render(request, 'chat_app/connection_created.html',{'first_person': first_person, 'user2': user2})
+    connection_id = request.GET.get('connection')
+    connection = get_object_or_404(Connection, id=connection_id)
+    messages = Message.objects.filter(connection=connection)
+    return render(request, 'chat_app/connection_created.html',{
+        'first_person': first_person, 
+        'user2': connection.user2.full_name,
+        'messages': messages
+    })
 def signup(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)

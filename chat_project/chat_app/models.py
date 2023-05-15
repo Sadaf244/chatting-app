@@ -40,3 +40,10 @@ class Connection(models.Model):
     user2 = models.ForeignKey(ChatUser, on_delete=models.CASCADE, related_name='connections_as_user2')
     started_at = models.DateTimeField(auto_now_add=True)
     ended_at = models.DateTimeField(null=True)
+    
+class Message(models.Model):
+    content = models.TextField()
+    sender = models.ForeignKey(ChatUser, on_delete=models.CASCADE)
+  
+    connection = models.ForeignKey(Connection, on_delete=models.CASCADE)
+    

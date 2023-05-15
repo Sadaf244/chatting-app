@@ -45,7 +45,7 @@
       .then(data => {
         if (data.user1 && data.user2) {
           // Connection established successfully
-          window.location.href = `/chat/connected/?user1=${data.user1}&user2=${data.user2}`;  // Redirect to the home.html page
+          window.location.href = `/chat/connected/?user1=${data.user1}&user2=${data.user2}&connection=${data.connection}`;  // Redirect to the home.html page
           console.log(`user1=${data.user1}, user2=${data.user2}`);
         } else {
           // Display an error message to the user
