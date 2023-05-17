@@ -19,11 +19,11 @@ def connected(request):
     first_person = ChatUser.objects.get(id=f_person)
     connection_id = request.GET.get('connection')
     connection = get_object_or_404(Connection, id=connection_id)
-    messages = Message.objects.filter(connection=connection)
     return render(request, 'chat_app/connection_created.html',{
         'first_person': first_person, 
         'user2': connection.user2.full_name,
-        'messages': messages
+        'gender':connection.user2.gender,
+        'country':connection.user2.country,     
     })
 def signup(request):
     if request.method == 'POST':
