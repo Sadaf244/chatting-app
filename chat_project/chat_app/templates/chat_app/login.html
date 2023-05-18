@@ -19,7 +19,9 @@
   
   <label for="password">Password:</label>
   <input type="password" id="password" name="password">
-  
+  <label for="show-password">
+    <input type="checkbox" id="show-password" onclick="togglePasswordVisibility()"> Show password
+  </label>
   <button type="submit">Log In</button>
 </form>
 </body>
@@ -34,3 +36,13 @@
     }
   });
 </script>
+<script>
+  function togglePasswordVisibility() {
+    var passwordInput = document.getElementById("password");
+    if (passwordInput.type === "password") {
+      passwordInput.type = "text";
+    } else {
+      passwordInput.type = "password";
+    }
+  }
+  </script>

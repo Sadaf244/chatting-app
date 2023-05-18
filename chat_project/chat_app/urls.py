@@ -8,5 +8,6 @@ urlpatterns = [
     path('connection/', connection, name='connection'),
     path('connect-establish/',connect_establish, name='connect-establish'),
     path('connected/', connected, name='connected'),
+    path('logout/', logout_view, name='logout'),
   
 ]

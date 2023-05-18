@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 # from .serializers import UserSerializer
 from django.contrib.auth import authenticate,login
+from datetime import datetime
 from .models import *
 from django.db.models import Q
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -12,39 +13,47 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.http import JsonResponse
-from .signup_form import SignupForm
+from .forms import SignupForm
 User=get_user_model()
 def connected(request):
     f_person = request.session['user_id']
     first_person = ChatUser.objects.get(id=f_person)
     connection_id = request.GET.get('connection')
     connection = get_object_or_404(Connection, id=connection_id)
+   
+   
     return render(request, 'chat_app/connection_created.html',{
         'first_person': first_person, 
         'user2': connection.user2.full_name,
         'gender':connection.user2.gender,
-        'country':connection.user2.country,     
+        'country':connection.user2.country,  
+        'connection':connection ,
+       
     })
 def signup(request):
     if request.method == 'POST':
-        form = SignupForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])
-            interests=form.cleaned_data['interests']
-            ar=[]
-            for x in interests:
-                intrst = Interest.objects.create(name=x)
-                ar.append(x)
-                
-            user.save()
-            user.interests.add(*ar)
-            user.save()
-            form.save()
-            return render(request, 'chat_app/login.html')
+        full_name = request.POST['full_name']
+        email = request.POST['email']
+        phone = request.POST['phone']
+        gender = request.POST['gender']
+        country = request.POST['country']
+        password = request.POST['password']
+        interests = request.POST.getlist('interests')
+        print(interests)
+        interest_objects = []
+        for interest_name in interests:
+            interest_object = Interest.objects.create(name=interest_name)
+            interest_objects.append(interest_object)
+        user=ChatUser.objects.create(phone=phone,email=email,full_name=full_name,gender=gender,country=country)    
+        user.save()
+        user.set_password(password)
+        user.interests.set(interest_objects)
+        user.save()
+       
+        return redirect('login')
     else:
-        form = SignupForm()
-    return render(request, 'chat_app/signup.html', {'form': form})
+        
+        return render(request, 'chat_app/signup.html')
 
 def login_view(request):
     if request.method == 'POST':
@@ -73,7 +82,7 @@ def login_view(request):
             }
             # return render(request, 'chat_app/connection_details.html',context )
             request.session['user_id'] = user.id
-            
+            user.save()
             return render(request, 'chat_app/toggle_status.html',context)
         else:
             # If user is not found or password is incorrect, show an error message
@@ -96,8 +105,27 @@ def toggle_online_status(request):
         return JsonResponse({'success': False})
 def connection(request):  
     
-    user_id = request.session['user_id']      
+    user_id = request.session['user_id']  
     user = ChatUser.objects.get(id=user_id)
+    print(user_id)
+    if Connection.objects.filter(user1=user,ended_at=None).exists() :
+        connection = Connection.objects.get(user1=user, ended_at=None)
+        return render(request, 'chat_app/connection_created.html',{
+        'first_person': user.full_name, 
+        'user2': connection.user2.full_name,
+        'gender':connection.user2.gender,
+        'country':connection.user2.country,  
+        'connection':connection   
+    })
+    if Connection.objects.filter(user2=user,ended_at=None).exists() :
+        connection = Connection.objects.get(user2=user, ended_at=None)
+        return render(request, 'chat_app/connection_created.html',{
+        'first_person': user.full_name, 
+        'user2': connection.user1.full_name,
+        'gender':connection.user1.gender,
+        'country':connection.user1.country,   
+        'connection':connection   
+    })
     arr=[]
     for x in user.interests.all():
         y=Interest.objects.get(id=x.id)
@@ -142,6 +170,27 @@ def connect_establish(request):
         return JsonResponse(context)  
     else:
         return JsonResponse({'success': False})
+    
+def logout_view(request):
+    user_id = request.session['user_id']  
+    user = ChatUser.objects.get(id=user_id)
+    print(user.id)
+    
+    connection = request.GET.get('connection')
+    print('connection',connection)
+       # Get the active connection id from url
+    try:
+        connection = Connection.objects.get(id=connection)
+        connection.ended_at = datetime.now()
+        connection.save()    
+        user.is_active=False
+        user.save()
+        # Logout the user
+        return redirect('login')
+    except Connection.DoesNotExist:
+        raise Exception("No Connection id")
+    
+    
   
     
  

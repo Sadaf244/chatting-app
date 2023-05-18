@@ -12,7 +12,7 @@ class InterestAdmin(admin.ModelAdmin):
 admin.site.register(Interest,InterestAdmin)
 
 class ConnectionAdmin(admin.ModelAdmin):
-    list_display=('id','user1','user2')
+    list_display=('id','user1','user2','started_at','ended_at')
 admin.site.register(Connection,ConnectionAdmin)
 
 class MessageAdmin(admin.ModelAdmin):

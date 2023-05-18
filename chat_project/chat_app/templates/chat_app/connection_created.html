@@ -17,6 +17,8 @@
   <p><strong> Name: {{ user2 }}</strong> </p>
   <p><strong> Gender: {{ gender }}</strong> </p>
   <p><strong> Country: {{ country }}</strong> </p>
+ 
+  <a href="{% url 'logout' %}?connection={{connection.id}}">Logout</a>
   </div>
   <div class="box-container1">
     <div id="messages"></div>
@@ -54,5 +56,6 @@
     })
 
 </script>
+
 </body>
 </html>

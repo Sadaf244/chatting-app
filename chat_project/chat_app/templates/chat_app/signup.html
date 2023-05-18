@@ -1,5 +1,5 @@
 {% load static %}
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -9,11 +9,65 @@
 </head>
 <body>
   <h1 style="text-align: center;color:brown;font-size:25px;">Sign up</h1>
-  <h1>Sign up</h1>
-  <form method="post">
+  <form method="post" action="{% url 'signup' %}">
     {% csrf_token %}
-    {{ form.as_p }}
+    <label for="full_name">Full Name:</label>
+    <input type="text" id="full_name" name="full_name" required>
+    <br><br>
+    
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+    <br><br>
+    
+    <label for="phone">Phone:</label>
+    <input type="text" id="phone" name="phone" required>
+    <br><br>
+    
+    <label for="gender">Gender:</label>
+    <select id="gender" name="gender" required>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+      <option value="other">Other</option>
+    </select>
+    <br><br>
+    
+    <label for="country">Country:</label>
+    <input type="text" id="country" name="country" required>
+    <br><br>
+  
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    <label for="show-password">
+      <input type="checkbox" id="show-password" onclick="togglePasswordVisibility()"> Show password
+    </label>
+    <br><br>
+    
+    <label>Interests:</label>
+    <br>
+    <input type="checkbox" id="Food" name="interests" value="Food">
+    <label for="Food">Food</label>
+    <br>
+    <input type="checkbox" id="Travel" name="interests" value="Travel">
+    <label for="Travel">Travel</label>
+    <br>
+    <input type="checkbox" id="Movie" name="interests" value="Movie">
+    <label for="Movie">Movie</label>
+    <br>
+    <!-- Add more checkboxes for additional interests if needed -->
+    <br><br>
+    
     <input type="submit" value="Sign up">
   </form>
+  <script>
+    function togglePasswordVisibility() {
+      var passwordInput = document.getElementById("password");
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+      } else {
+        passwordInput.type = "password";
+      }
+    }
+    </script>
+  
 </body>
 </html>
